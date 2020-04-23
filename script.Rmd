@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Particulate Matter Exploratory Data Analysis"
 output: github_document
 ---
 
@@ -7,7 +7,6 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Title
 The overall goal of this project is to explore the National Emissions Inventory database and see what it say about fine particulate matter pollution in the United states over the 10-year period 1999–2008. 
 
 ### Steps
@@ -23,9 +22,9 @@ library(readr)
 Download and extract data set from EPA National Emissions Inventory (USA)
 
 ```{r}
-#download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
-#unzip("mydata.zip", exdir = "./data")
-#file.remove("mydata.zip")
+download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
+unzip("mydata.zip", exdir = "./data")
+file.remove("mydata.zip")
 ```
 
 Read tables into the Environment

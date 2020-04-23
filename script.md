@@ -1,7 +1,5 @@
-Untitled
+Particulate Matter Exploratory Data Analysis
 ================
-
-## Title
 
 The overall goal of this project is to explore the National Emissions
 Inventory database and see what it say about fine particulate matter
@@ -35,10 +33,12 @@ Download and extract data set from EPA National Emissions Inventory
 (USA)
 
 ``` r
-#download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
-#unzip("mydata.zip", exdir = "./data")
-#file.remove("mydata.zip")
+download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
+unzip("mydata.zip", exdir = "./data")
+file.remove("mydata.zip")
 ```
+
+    ## [1] TRUE
 
 Read tables into the Environment
 
@@ -88,7 +88,10 @@ glimpse(scc)
 
 ### Questions:
 
-#### Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
+*Have total emissions from PM2.5 decreased in the United States from
+1999 to 2008? Using the base plotting system, make a plot showing the
+total PM2.5 emission from all sources for each of the years 1999, 2002,
+2005, and 2008.*
 
 Look for years tracked in inventory
 
@@ -134,11 +137,72 @@ total_emissions
     ## 3  2005       5454703
     ## 4  2008       3464205
 
+Make a barplot with the sum of emissions by year
+
 ``` r
 par(mfrow = c(1, 1))
-barplot(total_emissions$sum_emissions, names.arg = total_emissions$year, col = "slategray2")
+plot(
+    x = total_emissions$year, 
+    y = total_emissions$sum_emissions, 
+    type = "l", 
+    lwd = 2, 
+    col = "blue", 
+    ylim = c(0, 8e06),
+    xlab = "Year",
+    ylab = "Particulate Matter_[2.5]"
+)
+abline(
+    lm(
+        data = total_emissions, 
+        formula = sum_emissions ~ year
+    ),
+    lty = 2
+)
 ```
 
 ![](script_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-#### Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips==“24510”) from 1999 to 2008?
+*Have total emissions from PM2.5 decreased in the Baltimore City,
+Maryland (fips==“24510”) from 1999 to 2008?*
+
+``` r
+baltimore <- nei %>% 
+    filter(fips == "24510") %>% 
+    group_by(year) %>% 
+    summarize(
+        sum_emissions = sum(Emissions)
+    )
+
+baltimore
+```
+
+    ## # A tibble: 4 x 2
+    ##    year sum_emissions
+    ##   <int>         <dbl>
+    ## 1  1999         3274.
+    ## 2  2002         2454.
+    ## 3  2005         3091.
+    ## 4  2008         1862.
+
+``` r
+par(mfrow = c(1, 1))
+plot(
+    x = baltimore$year, 
+    y = baltimore$sum_emissions, 
+    type = "l", 
+    lwd = 2, 
+    col = "green", 
+    ylim = c(0, 3500),
+    xlab = "Year",
+    ylab = "Particulate Matter_[2.5]"
+)
+abline(
+    lm(
+        data = baltimore, 
+        formula = sum_emissions ~ year
+    ),
+    lty = 2
+)
+```
+
+![](script_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
