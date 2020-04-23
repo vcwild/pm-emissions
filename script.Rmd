@@ -1,0 +1,136 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Title
+The overall goal of this project is to explore the National Emissions Inventory database and see what it say about fine particulate matter pollution in the United states over the 10-year period 1999–2008. 
+
+### Steps
+
+Pick libraries to use in the project
+
+```{r message=TRUE, warning=TRUE}
+library(ggplot2)
+library(dplyr)
+library(readr)
+```
+
+Download and extract data set from EPA National Emissions Inventory (USA)
+
+```{r}
+#download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
+#unzip("mydata.zip", exdir = "./data")
+#file.remove("mydata.zip")
+```
+
+Read tables into the Environment
+
+```{r}
+# National Emissions Inventory (NEI)
+nei <- read_rds("./data/summarySCC_PM25.rds")
+# Source Classification Code (SCC)
+scc <- read_rds("./data/Source_Classification_Code.rds")
+```
+
+See a glimpse of the content
+
+```{r}
+glimpse(nei)
+```
+
+```{r}
+glimpse(scc)
+```
+
+### Questions:
+*Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.*
+
+Look for years tracked in inventory
+
+```{r}
+unique(nei$year)
+```
+
+Filter total emissions for each year
+
+```{r}
+total_emissions <- nei %>% 
+    group_by(year) %>% 
+    summarize(
+        sum_emissions = sum(Emissions)
+    )
+
+total_emissions
+```
+
+Change column *sum_emissions* to integer
+
+```{r}
+total_emissions <- total_emissions %>% 
+    mutate_at(vars(sum_emissions), as.integer)
+total_emissions
+```
+
+Make a barplot with the sum of emissions by year
+
+```{r}
+par(mfrow = c(1, 1))
+plot(
+    x = total_emissions$year, 
+    y = total_emissions$sum_emissions, 
+    type = "l", 
+    lwd = 2, 
+    col = "blue", 
+    ylim = c(0, 8e06),
+    xlab = "Year",
+    ylab = "Particulate Matter_[2.5]"
+)
+abline(
+    lm(
+        data = total_emissions, 
+        formula = sum_emissions ~ year
+    ),
+    lty = 2
+)
+
+```
+
+*Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (\color{red}{\verb|fips == "24510"|}fips=="24510") from 1999 to 2008?*
+
+```{r}
+baltimore <- nei %>% 
+    filter(fips == "24510") %>% 
+    group_by(year) %>% 
+    summarize(
+        sum_emissions = sum(Emissions)
+    )
+
+baltimore
+```
+
+```{r}
+par(mfrow = c(1, 1))
+plot(
+    x = baltimore$year, 
+    y = baltimore$sum_emissions, 
+    type = "l", 
+    lwd = 2, 
+    col = "green", 
+    ylim = c(0, 3500),
+    xlab = "Year",
+    ylab = "Particulate Matter_[2.5]"
+)
+abline(
+    lm(
+        data = baltimore, 
+        formula = sum_emissions ~ year
+    ),
+    lty = 2
+)
+```
+
