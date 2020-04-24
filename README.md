@@ -117,10 +117,9 @@ glimpse(scc)
 
 ### Questions:
 
-*Have total emissions from PM2.5 decreased in the United States from
-1999 to 2008? Using the base plotting system, make a plot showing the
-total PM2.5 emission from all sources for each of the years 1999, 2002,
-2005, and 2008.*
+-----
+
+#### *1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.*
 
 -----
 
@@ -196,12 +195,11 @@ abline(
 
 -----
 
-*Have total emissions from PM2.5 decreased in the Baltimore City,
-Maryland (fips==“24510”) from 1999 to 2008?*
+#### *2. Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (fips==“24510”) from 1999 to 2008?*
 
 -----
 
-Filter sum of emissions in **Baltimore City**
+Filter sum of emissions in *Baltimore City*
 
 ``` r
 nei_baltimore <- nei %>% 
@@ -250,10 +248,7 @@ abline(
 
 -----
 
-*Of the four types of sources indicated by the type (point, nonpoint,
-onroad, nonroad) variable, which of these four sources have seen
-decreases in emissions from 1999–2008 for Baltimore City? Which have
-seen increases in emissions from 1999–2008?*
+#### *3. Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City? Which have seen increases in emissions from 1999–2008?*
 
 -----
 
@@ -300,8 +295,7 @@ ggplot(pm_type_baltimore, aes(year, emissions, group = type, color = type)) +
 
 -----
 
-*Across the United States, how have emissions from coal
-combustion-related sources changed from 1999–2008?*
+#### *4. Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?*
 
 -----
 
@@ -376,8 +370,7 @@ ggplot(total_coal, aes(year, emissions, group = type, color = type)) +
 
 -----
 
-*How have emissions from motor vehicle sources changed from 1999–2008 in
-Baltimore City?*
+#### *5. How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?*
 
 -----
 
@@ -433,10 +426,7 @@ ggplot(total_vehicles_baltimore, aes(year, emissions, group = type, color = type
 
 -----
 
-*Compare emissions from motor vehicle sources in Baltimore City with
-emissions from motor vehicle sources in Los Angeles County, California
-(fips==“06037”). Which city has seen greater changes over time in motor
-vehicle emissions?*
+#### *6. Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (fips==“06037”). Which city has seen greater changes over time in motor vehicle emissions?*
 
 -----
 
