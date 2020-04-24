@@ -7,7 +7,34 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The overall goal of this project is to explore the National Emissions Inventory database and see what it say about fine particulate matter pollution in the United states over the 10-year period 1999–2008. 
+> The overall goal of this project is to explore the National Emissions Inventory database and see what it say about fine particulate matter pollution in the United states over the 10-year period 1999–2008. 
+
+## Tools Used
+
+- R language compiler
+- R base graphic devices
+- Tidyverse library packages
+- RMarkdown library package
+
+## Files
+
+  - **Raw data set**: [Environmental Protection Agency National Emissions Inventory](https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip)
+  - **[CODEBOOK.md](https://github.com/vcwild/pm-emissions/blob/master/CODEBOOK.md)**: step-by-step book explaining the code processing.
+  - **[plot<sub>x</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/images)**: the plotted files
+  - **[plot<sub>n</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**: the scripts that produces the [plotted images](https://github.com/vcwild/pm-emissions/tree/master/images)
+  - **script.Rmd**: the script to build the project from source
+
+## Build from Source
+
+Execute the following command in the terminal
+
+```{r eval=FALSE, include=FALSE}
+R
+library(rmarkdown)
+rmarkdown::render("script.Rmd", "html_document")
+```
+
+## CODEBOOK
 
 ### Steps
 
@@ -15,12 +42,11 @@ Pick libraries to use in the project
 
 ```{r message=TRUE, warning=TRUE}
 library(tidyverse)
-library(purl)
 ```
 
 Download and extract data set from EPA National Emissions Inventory (USA)
 
-```{r}
+```{r, cache=TRUE}
 download.file(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip", destfile = "mydata.zip")
 unzip("mydata.zip", exdir = "./data")
 file.remove("mydata.zip")
@@ -28,7 +54,7 @@ file.remove("mydata.zip")
 
 Read tables into the Environment
 
-```{r}
+```{r, cache=TRUE}
 # National Emissions Inventory (NEI)
 nei <- read_rds("./data/summarySCC_PM25.rds")
 # Source Classification Code (SCC)
@@ -244,7 +270,6 @@ ggplot(total_coal, aes(year, emissions, group = type, color = type)) +
         subtitle = "(1999-2008)"
     ) +
     theme_minimal()
-    
 
 dev.copy(png, "./images/plot4.png")
 dev.off()
@@ -289,7 +314,6 @@ ggplot(total_vehicles_baltimore, aes(year, emissions, group = type, color = type
         subtitle = "(1999-2008)"
     ) +
     theme_minimal()
-    
 
 dev.copy(png, "./images/plot5.png")
 dev.off()
@@ -338,7 +362,7 @@ ggplot(total_vehicles_ba_la, aes(year, emissions, group = type, color = type)) +
         title = "Disaggregate Vehicle Emissions Baltimore x Los Angeles",
         subtitle = "(1999-2008)"
     )
-    
+
 dev.copy(png, "./images/plot6_1.png")
 dev.off()
 ```
@@ -381,7 +405,7 @@ ggplot(sum_vehicles_ba_la, aes(year, emissions, group = city, color = city)) +
         subtitle = "(1999-2008)"
     ) +
     theme_minimal()
-    
+
 dev.copy(png, "./images/plot6_2.png")
 dev.off()
 ```
