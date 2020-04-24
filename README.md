@@ -17,7 +17,7 @@ Particulate Matter Emissions
   - **Raw data set**: [Environmental Protection Agency National
     Emissions
     Inventory](https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip)
-  - **[CODEBOOK.md](https://github.com/vcwild/base-plots/blob/master/CODEBOOK.md)**:
+  - **[CODEBOOK.md](https://github.com/vcwild/pm-emissions/blob/master/CODEBOOK.md)**:
     step-by-step book explaining the code
     processing.
   - **[plot<sub>num</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/images)**:
