@@ -1,4 +1,4 @@
-Particulate Matter Exploratory Data Analysis
+Particulate Matter Emissions
 ================
 
 > The overall goal of this project is to explore the National Emissions
@@ -20,17 +20,17 @@ Particulate Matter Exploratory Data Analysis
   - **[CODEBOOK.md](https://github.com/vcwild/base-plots/blob/master/CODEBOOK.md)**:
     step-by-step book explaining the code
     processing.
-  - **[plot<sub>x</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/script_files/figure-gfm)**:
+  - **[plot<sub>num</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/images)**:
     the plotted
     files
-  - **[plot<sub>n</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**:
+  - **[plot<sub>num</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**:
     the scripts that produces the [plotted
-    images](https://github.com/vcwild/pm-emissions/tree/master/script_files/figure-gfm)
+    images](https://github.com/vcwild/pm-emissions/tree/master/images)
   - **script.Rmd**: the script to build the project from source
 
 ## Build from Source
 
-Execute the following command in the terminal
+Inside the project root folder, execute the following command in the terminal
 
 ```
 R
@@ -40,7 +40,7 @@ rmarkdown::render("script.Rmd", "html_document")
 
 ## CODEBOOK
 
-### Steps
+### Initial Steps
 
 Pick libraries to use in the
     project
