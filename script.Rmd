@@ -17,6 +17,7 @@ Pick libraries to use in the project
 library(ggplot2)
 library(dplyr)
 library(readr)
+library(lubridate)
 ```
 
 Download and extract data set from EPA National Emissions Inventory (USA)
@@ -77,7 +78,7 @@ total_emissions
 
 Make a barplot with the sum of emissions by each year
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 par(mfrow = c(1, 1))
 plot(
     x = total_emissions$year, 
@@ -87,7 +88,8 @@ plot(
     col = "blue", 
     ylim = c(0, 8e06),
     xlab = "Year",
-    ylab = "Particulate Matter_[2.5]"
+    ylab = expression("PM"[2.5]),
+    main = "Particulate Matter Emissions"
 )
 abline(
     lm(
@@ -97,32 +99,41 @@ abline(
     lty = 2
 )
 
+dev.copy(png, "./images/plot1.png")
+dev.off()
 ```
+
+-----
 
 *Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (\color{red}{\verb|fips == "24510"|}fips=="24510") from 1999 to 2008?*
 
+Filter sum of emissions in **Baltimore City**
+
 ```{r}
-baltimore <- nei %>% 
+nei_baltimore <- nei %>% 
     filter(fips == "24510") %>% 
     group_by(year) %>% 
     summarize(
         sum_emissions = sum(Emissions)
     )
 
-baltimore
+nei_baltimore
 ```
 
-```{r}
+Set the canvas to 1 plot and plot the results with a tendency line
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 par(mfrow = c(1, 1))
 plot(
-    x = baltimore$year, 
-    y = baltimore$sum_emissions, 
+    x = nei_baltimore$year, 
+    y = nei_baltimore$sum_emissions, 
     type = "l", 
     lwd = 2, 
     col = "green", 
     ylim = c(0, 3500),
     xlab = "Year",
-    ylab = "Particulate Matter_[2.5]"
+    ylab = expression("PM"[2.5]),
+    main = "Particulate Matter Emissions in Baltimore"
 )
 abline(
     lm(
@@ -131,5 +142,100 @@ abline(
     ),
     lty = 2
 )
+
+dev.copy(png, "./images/plot2.png")
+dev.off()
+```
+
+-----
+
+*Of the four types of sources indicated by the \color{red}{\verb|type|}type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City? Which have seen increases in emissions from 1999–2008?*
+
+Change NEI data set to work as a tibble (compatible with the *tidyverse*) and filter emissions from **Baltimore** by each type
+
+```{r}
+nei <- as_tibble(nei)
+
+pm_type_baltimore <- nei %>% 
+    filter(fips == "24510") %>% 
+    group_by(type, year) %>%
+    summarize(
+        emissions = sum(Emissions)
+    ) %>% 
+    arrange(year, type)
+```
+
+Plot the results
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(pm_type_baltimore, aes(year, emissions, group = type, color = type)) +
+    geom_point(na.rm = TRUE) +
+    geom_smooth() +
+    labs(
+        x = "Year",
+        y = expression("PM"[2.5]),
+        color = "Type",
+        title = "Emissions in Baltimore City",
+        subtitle = "(1999-2008)",
+        shape = ""
+    ) +
+    geom_smooth(
+        method = "lm", 
+        lty = 2, 
+        se = FALSE,
+        lwd = 0.2
+    ) +
+    theme_minimal()
+
+dev.copy(png, "./images/plot3.png")
+dev.off()
+```
+
+-----
+
+*Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?*
+
+
+
+```{r}
+tscc <- as.tibble(scc)
+
+scc_coal <- tscc %>% 
+    filter(grepl("coal", Short.Name, ignore.case = TRUE))
+total_coal <- nei %>% 
+    filter(SCC %in% scc_coal$SCC) %>% 
+    group_by(year, type) %>% 
+    summarize(
+        emissions = sum(Emissions)
+    )
+
+print(total_coal)
+```
+
+Plot the results
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(total_coal, aes(year, emissions, group = type, color = type)) +
+    geom_point(na.rm = TRUE) +
+    geom_smooth(
+        method = "lm", 
+        lty = 2, 
+        se = FALSE,
+        color = "grey",
+        lwd = .5
+    ) +
+    geom_smooth() +
+    labs(
+        x = "Year",
+        y = "CCE (ton)",
+        color = "Type",
+        title = "Total Coal Emissions",
+        subtitle = "(1999-2008)"
+    ) +
+    theme_minimal()
+    
+
+dev.copy(png, "./images/plot4.png")
+dev.off()
 ```
 
