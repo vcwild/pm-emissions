@@ -14,10 +14,8 @@ The overall goal of this project is to explore the National Emissions Inventory 
 Pick libraries to use in the project
 
 ```{r message=TRUE, warning=TRUE}
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(lubridate)
+library(tidyverse)
+library(purl)
 ```
 
 Download and extract data set from EPA National Emissions Inventory (USA)
@@ -50,6 +48,8 @@ glimpse(scc)
 ### Questions:
 *Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.*
 
+-----
+
 Look for years tracked in inventory
 
 ```{r}
@@ -78,7 +78,7 @@ total_emissions
 
 Make a barplot with the sum of emissions by each year
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r plot1, echo=TRUE, message=FALSE, warning=FALSE}
 par(mfrow = c(1, 1))
 plot(
     x = total_emissions$year, 
@@ -88,7 +88,7 @@ plot(
     col = "blue", 
     ylim = c(0, 8e06),
     xlab = "Year",
-    ylab = expression("PM"[2.5]),
+    ylab = expression("Total PM"[2.5]*" emission (ton)"),
     main = "Particulate Matter Emissions"
 )
 abline(
@@ -107,6 +107,8 @@ dev.off()
 
 *Have total emissions from PM2.5 decreased in the Baltimore City, Maryland (\color{red}{\verb|fips == "24510"|}fips=="24510") from 1999 to 2008?*
 
+-----
+
 Filter sum of emissions in **Baltimore City**
 
 ```{r}
@@ -122,7 +124,7 @@ nei_baltimore
 
 Set the canvas to 1 plot and plot the results with a tendency line
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r plot2, echo=TRUE, message=FALSE, warning=FALSE}
 par(mfrow = c(1, 1))
 plot(
     x = nei_baltimore$year, 
@@ -132,12 +134,12 @@ plot(
     col = "green", 
     ylim = c(0, 3500),
     xlab = "Year",
-    ylab = expression("PM"[2.5]),
+    ylab = expression("Total PM"[2.5]*" emission (ton)"),
     main = "Particulate Matter Emissions in Baltimore"
 )
 abline(
     lm(
-        data = baltimore, 
+        data = nei_baltimore, 
         formula = sum_emissions ~ year
     ),
     lty = 2
@@ -150,6 +152,8 @@ dev.off()
 -----
 
 *Of the four types of sources indicated by the \color{red}{\verb|type|}type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City? Which have seen increases in emissions from 1999–2008?*
+
+-----
 
 Change NEI data set to work as a tibble (compatible with the *tidyverse*) and filter emissions from **Baltimore** by each type
 
@@ -167,13 +171,13 @@ pm_type_baltimore <- nei %>%
 
 Plot the results
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r plot3, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(pm_type_baltimore, aes(year, emissions, group = type, color = type)) +
     geom_point(na.rm = TRUE) +
     geom_smooth() +
     labs(
         x = "Year",
-        y = expression("PM"[2.5]),
+        y = expression("Total PM"[2.5]*" emission (ton)"),
         color = "Type",
         title = "Emissions in Baltimore City",
         subtitle = "(1999-2008)",
@@ -195,13 +199,20 @@ dev.off()
 
 *Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?*
 
+-----
 
+Set SCC as tibble. 
+
+Filter coal occurrences in SCC and use it as parameter to filter coal occurrences in NEI.
+
+From filtered NEI get the sum of coal emissions by year and type.
 
 ```{r}
 tscc <- as.tibble(scc)
 
 scc_coal <- tscc %>% 
     filter(grepl("coal", Short.Name, ignore.case = TRUE))
+
 total_coal <- nei %>% 
     filter(SCC %in% scc_coal$SCC) %>% 
     group_by(year, type) %>% 
@@ -212,9 +223,9 @@ total_coal <- nei %>%
 print(total_coal)
 ```
 
-Plot the results
+Plot the results in scatterplot and reggression line models
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r plot4, echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(total_coal, aes(year, emissions, group = type, color = type)) +
     geom_point(na.rm = TRUE) +
     geom_smooth(
@@ -236,6 +247,142 @@ ggplot(total_coal, aes(year, emissions, group = type, color = type)) +
     
 
 dev.copy(png, "./images/plot4.png")
+dev.off()
+```
+
+-----
+
+*How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?*
+
+-----
+
+```{r}
+scc_vehicle <- tscc %>% 
+    filter(grepl("vehicle", SCC.Level.Two, ignore.case = TRUE))
+
+total_vehicles_baltimore <- nei %>% 
+    filter(SCC %in% scc_vehicle$SCC, fips == "24510") %>% 
+    group_by(year, type) %>% 
+    summarize(
+        emissions = sum(Emissions)
+    )
+
+total_vehicles_baltimore
+```
+
+```{r plot5, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(total_vehicles_baltimore, aes(year, emissions, group = type, color = type)) +
+    geom_point(na.rm = TRUE) +
+    geom_smooth(
+        method = "lm", 
+        lty = 2, 
+        se = FALSE,
+        color = "grey",
+        lwd = .5
+    ) +
+    geom_smooth() +
+    labs(
+        x = "Year",
+        y = expression("Total PM"[2.5]*" emission (ton)"),
+        color = "Type",
+        title = "Total Vehicle Emissions in Baltimore City",
+        subtitle = "(1999-2008)"
+    ) +
+    theme_minimal()
+    
+
+dev.copy(png, "./images/plot5.png")
+dev.off()
+```
+
+-----
+
+*Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (\color{red}{\verb|fips == "06037"|}fips=="06037"). Which city has seen greater changes over time in motor vehicle emissions?*
+
+-----
+
+Set the total Vehicle emissions in NEI by using the SCC vehicles vector
+
+```{r}
+total_vehicles_ba_la <- nei %>% 
+    filter(SCC %in% scc_vehicle$SCC, fips == c("24510", "06037")) %>% 
+    group_by(fips, year, type) %>% 
+    summarize(
+        emissions = sum(Emissions)
+    ) %>% 
+    mutate(
+        city = if_else(fips == "24510", "Baltimore", "Los Angeles")
+    )
+
+glimpse(total_vehicles_ba_la)
+```
+
+Plot disaggregate
+
+```{r plot6_1, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(total_vehicles_ba_la, aes(year, emissions, group = type, color = type)) +
+    geom_point(na.rm = TRUE) +
+    geom_line(aes(year, emissions)) +
+    facet_grid(city ~ .) +
+    geom_smooth(
+        method = "lm", 
+        lty = 2, 
+        se = FALSE,
+        color = "grey",
+        lwd = .5
+    ) +
+    labs(
+        x = "Year",
+        y = expression("Total PM"[2.5]*" emission (ton)"),
+        color = "Type",
+        title = "Disaggregate Vehicle Emissions Baltimore x Los Angeles",
+        subtitle = "(1999-2008)"
+    )
+    
+dev.copy(png, "./images/plot6_1.png")
+dev.off()
+```
+
+Using the same method, aggregate the sum of emissions of emissions by each county
+
+```{r}
+sum_vehicles_ba_la <- nei %>% 
+    filter(SCC %in% scc_vehicle$SCC, fips == c("24510", "06037")) %>% 
+    group_by(fips, year) %>% 
+    summarize(
+        emissions = sum(Emissions)
+    ) %>% 
+    mutate(
+        city = if_else(fips == "24510", "Baltimore", "Los Angeles")
+    ) %>% 
+    arrange(year)
+
+sum_vehicles_ba_la
+```
+
+Plot the total vehicle emissions comparison
+
+```{r plot6_2, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(sum_vehicles_ba_la, aes(year, emissions, group = city, color = city)) +
+    geom_point(na.rm = TRUE) +
+    geom_smooth(aes(year, emissions)) +
+    geom_smooth(
+        method = "lm", 
+        lty = 2, 
+        se = FALSE,
+        color = "grey",
+        lwd = .5
+    ) +
+    labs(
+        x = "Year",
+        y = expression("Total PM"[2.5]*" emission (ton)"),
+        color = "County",
+        title = "Total Vehicle Emissions Baltimore x Los Angeles",
+        subtitle = "(1999-2008)"
+    ) +
+    theme_minimal()
+    
+dev.copy(png, "./images/plot6_2.png")
 dev.off()
 ```
 
