@@ -75,7 +75,7 @@ total_emissions <- total_emissions %>%
 total_emissions
 ```
 
-Make a barplot with the sum of emissions by year
+Make a barplot with the sum of emissions by each year
 
 ```{r}
 par(mfrow = c(1, 1))
