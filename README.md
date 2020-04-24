@@ -26,7 +26,7 @@ Particulate Matter Emissions
   - **[plot<sub>num</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**:
     the scripts that produces the [plotted
     images](https://github.com/vcwild/pm-emissions/tree/master/images)
-  - **script.Rmd**: the script to build the project from source
+  - **[script.Rmd](https://github.com/vcwild/pm-emissions/blob/master/script.Rmd)**: the script to build the project from source
 
 ## Build from Source
 
