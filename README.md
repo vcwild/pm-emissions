@@ -30,7 +30,7 @@ Particulate Matter Emissions
 
 ## Build from Source
 
-Inside the project root folder, execute the following command in the terminal
+Inside the project root folder, execute the following
 
 ```
 R
