@@ -11,6 +11,7 @@ Particulate Matter Emissions
   - R base graphic devices
   - Tidyverse library packages
   - RMarkdown library package
+  - Knitr library package
 
 ## Files
 
