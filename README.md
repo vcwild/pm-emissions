@@ -21,10 +21,10 @@ Particulate Matter Emissions
   - **[CODEBOOK.md](https://github.com/vcwild/pm-emissions/blob/master/CODEBOOK.md)**:
     step-by-step book explaining the code
     processing.
-  - **[plot<sub>num</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/images)**:
+  - **[plot<sub>n</sub>.png](https://github.com/vcwild/pm-emissions/tree/master/images)**:
     the plotted
     files
-  - **[plot<sub>num</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**:
+  - **[plot<sub>n</sub>.R](https://github.com/vcwild/pm-emissions/tree/master/scripts)**:
     the scripts to produce the [plotted
     images](https://github.com/vcwild/pm-emissions/tree/master/images)
   - **[script.Rmd](https://github.com/vcwild/pm-emissions/blob/master/script.Rmd)**: the script to build the project from source
